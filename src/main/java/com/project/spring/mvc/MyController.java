@@ -2,7 +2,10 @@ package com.project.spring.mvc;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/employee")
@@ -20,17 +23,14 @@ public class MyController {
     }
 
     @RequestMapping("/showDetails")
-    public String showEmployeeDetails(@ModelAttribute("employee") Employee employee) {
-        /*получаем через парамметр доступ к атрибуту и можем менять его поля в методе*/
-        String addMrToName = employee.getName();
-        employee.setName("Mr." + addMrToName);
-
-        String addExclamationMarkToSurname = employee.getName();
-        employee.setName(addExclamationMarkToSurname + "!");
-
-        int salaryMultiplyTen = employee.getSalary();
-        employee.setSalary(salaryMultiplyTen * 10);
-
-        return "showDetails-view";
+    public String showEmployeeDetails(@Valid @ModelAttribute("employee") Employee employee,
+                                      BindingResult bindingResult) {
+        /*получаем через парамметр доступ к атрибуту и можем менять его поля в методе.
+        @Valid - наш атрибут employee будет подвергаться проверке(валидации).
+        bindingResult - сюда будет помещен результат валидации employee*/
+        if (bindingResult.hasErrors()) {
+            return "askDetails-view";
+        } else
+            return "showDetails-view";
     }
 }
